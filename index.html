@@ -2,14 +2,10 @@
   <div id="content"></div>
 
   <script>
-const proxyUrl = "https://cors-anywhere.herokuapp.com/";
+const proxyUrl = "https://api.allorigins.win/raw?url=";
 const apiUrl = "https://www.nordnet.se/api/2/instrument_search/query/stocklist?apply_filters=exchange_list%3Dse%3Alargecapstockholmsek%7Cexchange_country%3DSE&sort_order=asc&sort_attribute=diff_pct&limit=100&callback=handleData";
 
-fetch(proxyUrl + apiUrl, {
-    headers: {
-        "Origin": "https://your-github-pages-domain.com", // Replace with your GitHub Pages domain
-    },
-})
+fetch(proxyUrl + encodeURIComponent(apiUrl))
 .then(response => response.json())
 .then(data => {
     // Handle the data received from the backend
