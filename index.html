@@ -3,13 +3,11 @@
   <div id="content"></div>
 
   <script>
-
-fetch("https://europe-north1-stable-balancer-421510.cloudfunctions.net/get-data")
-.then(console.log).then(data => document.getElementById("content").textContent = data)
-.catch(console.warn);
-
-
-
-
+    fetch(
+      "https://europe-north1-stable-balancer-421510.cloudfunctions.net/get-data"
+    )
+      .then((response) => response.json())
+      .then((data) => (document.getElementById("content").textContent = data))
+      .catch(console.warn);
   </script>
 </body>
