@@ -7,7 +7,11 @@
       "https://europe-north1-stable-balancer-421510.cloudfunctions.net/get-data"
     )
       .then((response) => response.json())
-      .then((data) => (document.getElementById("content").textContent = data))
+      .then((data) => {
+        console.log(data)
+      
+        document.getElementById("content").textContent = JSON.stringify(data);
+      })
       .catch(console.warn);
   </script>
 </body>
