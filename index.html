@@ -1,8 +1,28 @@
 <body>
-  Waddup
+  <div id="buttons" class="button-container">
+    <button id="decrease" class="button">Mindre text</button>
+    <button id="increase" class="button">Större text</button>
+  </div>
   <div id="content"></div>
 
   <style>
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+
+    .button-container {
+      display: flex;
+      justify-content: space-evenly;
+      margin: 30px;
+    }
+
+    .button {
+      font-size: 40px;
+      padding: 20px;
+    }
+
+
     .table-row:nth-child(even) {
       background-color: #f2f2f2;
     }
@@ -15,6 +35,24 @@
     .zero {
       color: black;
     }
+    table {
+      font-size: 56px;
+      font-weight: bolder;
+      width: 100%;
+      border-spacing: unset;
+    }
+    th,
+    td {
+      border-bottom: 5px solid black;
+      padding: 10px;
+      text-align: right;
+      min-width: 20px;
+    }
+    .name-cell {
+      width: 100%;
+      word-wrap: break-word;
+      text-align: left;
+    }
   </style>
 
   <script>
@@ -23,36 +61,51 @@
     )
       .then((response) => response.json())
       .then((data) => {
-        const table = document.createElement('table');
-        const headerRow = document.createElement('tr');
+        // const data = [
+        //   {
+        //     value: 10,
+        //     percent: 10,
+        //     name: "Item 1 akljsdhfl askldfj haskljdfh aklsd",
+        //   },
+        //   { value: -20, percent: -20, name: "Item 2" },
+        //   { value: 30, percent: 30, name: "Item 3" },
+        //   { value: 0, percent: 0, name: "Item 4" },
+        //   { value: -50, percent: -50, name: "Item 5" },
+        // ];
 
-        ['Name', 'Percentage', 'Value'].forEach(text => {
-          const th = document.createElement('th');
+        const table = document.createElement("table");
+        const headerRow = document.createElement("tr");
+
+        ["Företag", "%", "Kurs"].forEach((text, i) => {
+          const th = document.createElement("th");
           th.textContent = text;
+          if (i == 0) th.className = "name-cell";
           headerRow.appendChild(th);
         });
         table.appendChild(headerRow);
 
-        data.forEach(item => {
-          const row = document.createElement('tr');
-          row.className = 'table-row';
+        data.forEach((item) => {
+          const row = document.createElement("tr");
+          row.className = "table-row";
 
-          const nameCell = document.createElement('td');
+          const nameCell = document.createElement("td");
+          nameCell.className = "name-cell";
           nameCell.textContent = item.name;
           row.appendChild(nameCell);
 
-          const percentageCell = document.createElement('td');
+          const percentageCell = document.createElement("td");
           percentageCell.textContent = item.percent;
-          if (item.percent.startsWith('-')) {
-            percentageCell.className = 'negative';
-          } else if (item.percent === '0') {
-            percentageCell.className = 'zero';
+          if (item.percent < 0) {
+            percentageCell.className = "negative";
+          } else if (item.percent === 0) {
+            percentageCell.className = "zero";
           } else {
-            percentageCell.className = 'positive';
+            percentageCell.className = "positive";
+            percentageCell.textContent = "+" + item.percent;
           }
           row.appendChild(percentageCell);
 
-          const valueCell = document.createElement('td');
+          const valueCell = document.createElement("td");
           valueCell.textContent = item.value;
           row.appendChild(valueCell);
 
@@ -62,8 +115,24 @@
         document.getElementById("content").appendChild(table);
       })
       .catch(console.warn);
+
+    const increaseButton = document.querySelector("#increase");
+    const decreaseButton = document.querySelector("#decrease");
+
+    // Load font size from localStorage or use default
+    let fontSize = localStorage.getItem("fontSize") || 56;
+    table.style.fontSize = `${fontSize}px`;
+
+    increaseButton.addEventListener("click", () => {
+      fontSize = Math.min(fontSize + 5, 150); // Limit max size to 100
+      table.style.fontSize = `${fontSize}px`;
+      localStorage.setItem("fontSize", fontSize);
+    });
+
+    decreaseButton.addEventListener("click", () => {
+      fontSize = Math.max(fontSize - 5, 40); // Limit min size to 10
+      table.style.fontSize = `${fontSize}px`;
+      localStorage.setItem("fontSize", fontSize);
+    });
   </script>
 </body>
-
-
-
