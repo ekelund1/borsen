@@ -10,7 +10,6 @@
       font-family: Arial, Helvetica, sans-serif;
     }
 
-
     .button-container {
       display: flex;
       justify-content: space-evenly;
@@ -22,10 +21,10 @@
       padding: 20px;
     }
 
-
-    .table-row:nth-child(even) {
+    .table-row:nth-child(even) td {
       background-color: #f2f2f2;
     }
+
     .positive {
       color: green;
     }
@@ -39,7 +38,8 @@
       font-size: 56px;
       font-weight: bolder;
       width: 100%;
-      border-spacing: unset;
+      border-spacing: 0 3rem;
+      border-collapse: separate;
     }
     th,
     td {
@@ -116,6 +116,7 @@
       })
       .catch(console.warn);
 
+    const table = document.querySelector("table");
     const increaseButton = document.querySelector("#increase");
     const decreaseButton = document.querySelector("#decrease");
 
