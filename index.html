@@ -25,7 +25,7 @@
       .then((data) => {
         const table = document.createElement('table');
         const headerRow = document.createElement('tr');
-        
+
         ['Name', 'Percentage', 'Value'].forEach(text => {
           const th = document.createElement('th');
           th.textContent = text;
@@ -42,10 +42,10 @@
           row.appendChild(nameCell);
 
           const percentageCell = document.createElement('td');
-          percentageCell.textContent = item.percentage;
-          if (item.percentage.startsWith('-')) {
+          percentageCell.textContent = item.percent;
+          if (item.percent.startsWith('-')) {
             percentageCell.className = 'negative';
-          } else if (item.percentage === '0') {
+          } else if (item.percent === '0') {
             percentageCell.className = 'zero';
           } else {
             percentageCell.className = 'positive';
