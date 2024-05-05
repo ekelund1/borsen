@@ -90,7 +90,7 @@
 
           const nameCell = document.createElement("td");
           nameCell.className = "name-cell";
-          nameCell.textContent = item.name;
+          nameCell.textContent = item.name.replaceAll("ser.", "");
           row.appendChild(nameCell);
 
           const percentageCell = document.createElement("td");
