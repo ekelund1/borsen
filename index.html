@@ -2,16 +2,68 @@
   Waddup
   <div id="content"></div>
 
+  <style>
+    .table-row:nth-child(even) {
+      background-color: #f2f2f2;
+    }
+    .positive {
+      color: green;
+    }
+    .negative {
+      color: red;
+    }
+    .zero {
+      color: black;
+    }
+  </style>
+
   <script>
     fetch(
       "https://europe-north1-stable-balancer-421510.cloudfunctions.net/get-data"
     )
       .then((response) => response.json())
       .then((data) => {
-        console.log(data)
-      
-        document.getElementById("content").textContent = JSON.stringify(data);
+        const table = document.createElement('table');
+        const headerRow = document.createElement('tr');
+        
+        ['Name', 'Percentage', 'Value'].forEach(text => {
+          const th = document.createElement('th');
+          th.textContent = text;
+          headerRow.appendChild(th);
+        });
+        table.appendChild(headerRow);
+
+        data.forEach(item => {
+          const row = document.createElement('tr');
+          row.className = 'table-row';
+
+          const nameCell = document.createElement('td');
+          nameCell.textContent = item.name;
+          row.appendChild(nameCell);
+
+          const percentageCell = document.createElement('td');
+          percentageCell.textContent = item.percentage;
+          if (item.percentage.startsWith('-')) {
+            percentageCell.className = 'negative';
+          } else if (item.percentage === '0') {
+            percentageCell.className = 'zero';
+          } else {
+            percentageCell.className = 'positive';
+          }
+          row.appendChild(percentageCell);
+
+          const valueCell = document.createElement('td');
+          valueCell.textContent = item.value;
+          row.appendChild(valueCell);
+
+          table.appendChild(row);
+        });
+
+        document.getElementById("content").appendChild(table);
       })
       .catch(console.warn);
   </script>
 </body>
+
+
+

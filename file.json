@@ -1,0 +1,124 @@
+{
+  "instrument_info": {
+    "instrument_id": 16081531,
+    "name": "Volvo, AB ser. B",
+    "long_name": "Volvo, AB ser. B",
+    "symbol": "VOLV B",
+    "instrument_group_type": "EQ",
+    "instrument_type_hierarchy": "EQ/ESH",
+    "instrument_type": "ESH",
+    "isin": "SE0000115446",
+    "currency": "SEK",
+    "price_unit": "SEK",
+    "clearing_place": "VPC",
+    "is_tradable": true,
+    "instrument_pawn_percentage": 80,
+    "is_shortable": true,
+    "issuer_id": 249431,
+    "issuer_name": "Volvo, AB",
+    "is_monthly_saveable": false,
+    "mifid2_id": 0,
+    "instrument_icon_url": "https://cdn.prod.nntech.io/cms-proxy/6xe8ehctp75g/2ydJP83kMtmzf2BnozdMl6/f37a79b6408f9e4d76ce01403cffe6cf/Volvo_Logo.png"
+  },
+  "status_info": {
+    "trading_status": "CLOSED",
+    "translated_trading_status": "Stängd",
+    "tick_timestamp": 1714752000000
+  },
+  "market_info": {
+    "market_id": 11,
+    "market_sub_id": 4711,
+    "identifier": "366",
+    "tick_size_id": 14734
+  },
+  "price_info": {
+    "last": {
+      "price": 271.5,
+      "decimals": 2
+    },
+    "open": {
+      "price": 275,
+      "decimals": 2
+    },
+    "close": {
+      "price": 277.5,
+      "decimals": 2
+    },
+    "turnover": 1613349575.4,
+    "turnover_normalized": 1613349575.4,
+    "turnover_volume": 5955017,
+    "bid": {
+      "price": 271.5,
+      "decimals": 2
+    },
+    "ask": {
+      "price": 271.5,
+      "decimals": 2
+    },
+    "bid_volume": 1693471,
+    "ask_volume": 1814314,
+    "high": {
+      "price": 275.3,
+      "decimals": 2
+    },
+    "low": {
+      "price": 269.2,
+      "decimals": 2
+    },
+    "diff": {
+      "diff": -6,
+      "decimals": 2
+    },
+    "diff_pct": -2.16,
+    "spread": {
+      "price": 0,
+      "decimals": 4
+    },
+    "spread_pct": 0,
+    "tick_timestamp": 1714752000000,
+    "realtime": false
+  },
+  "exchange_info": {
+    "exchange_country": "SE",
+    "exchanges": [
+      "Nasdaq Stockholm Large Cap",
+      "OMXS30"
+    ]
+  },
+  "key_ratios_info": {
+    "pe": 10.81,
+    "ps": 1,
+    "eps": 25.07,
+    "pb": 3.05,
+    "dividend_per_share": 18,
+    "dividend_yield": 6.64
+  },
+  "historical_returns_info": {
+    "yield_1d": -2.16,
+    "yield_1w": -3.48,
+    "yield_1m": -5.6,
+    "yield_3m": 5.5,
+    "yield_ytd": 3.74,
+    "yield_1y": 33.91,
+    "yield_3y": 29.38,
+    "yield_5y": 82.34,
+    "yield_10y": 165.14,
+    "yield_max": 408.43,
+    "realtime": false
+  },
+  "company_info": {
+    "report_date": 1721253600000,
+    "report_type": "SECOND_QUARTER_EARNINGS_RESULTS",
+    "report_description": "Q2-rapport",
+    "market_cap": 553672311590
+  },
+  "statistical_info": {
+    "statistics_timestamp": 1714737619909,
+    "number_of_owners": 28193
+  },
+  "nnx_info": {
+    "nnx_instrument_id": "8c760a5b-a8ed-4b91-a49a-40d81fc36425",
+    "trading_order_book_id": "c4d2a016-0923-4411-ae62-dee5d5c87d2f",
+    "market_data_order_book_id": "c4d2a016-0923-4411-ae62-dee5d5c87d2f"
+  }
+}
