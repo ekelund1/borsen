@@ -1,8 +1,8 @@
 <body>
-  <div id="buttons" class="button-container">
+  <!-- <div id="buttons" class="button-container">
     <button id="decrease" class="button">Mindre text</button>
     <button id="increase" class="button">Större text</button>
-  </div>
+  </div> -->
   <div id="content">
     <table></table>
   </div>
@@ -37,7 +37,7 @@
       color: black;
     }
     table {
-      font-size: 56px;
+      font-size: 40px;
       font-weight: bolder;
       width: 100%;
       border-spacing: 0 3rem;
@@ -65,18 +65,6 @@
     )
       .then((response) => response.json())
       .then((data) => {
-        // const data = [
-        //   {
-        //     value: 10,
-        //     percent: 10,
-        //     name: "Item 1 akljsdhfl askldfj haskljdfh aklsd",
-        //   },
-        //   { value: -20, percent: -20, name: "Item 2" },
-        //   { value: 30, percent: 30, name: "Item 3" },
-        //   { value: 0, percent: 0, name: "Item 4" },
-        //   { value: -50, percent: -50, name: "Item 5" },
-        // ];
-
         const headerRow = document.createElement("tr");
 
         ["Företag", "%", "Kurs"].forEach((text, i) => {
@@ -119,23 +107,23 @@
       })
       .catch(console.warn);
 
-    const increaseButton = document.querySelector("#increase");
-    const decreaseButton = document.querySelector("#decrease");
+    // const increaseButton = document.querySelector("#increase");
+    // const decreaseButton = document.querySelector("#decrease");
 
-    // Load font size from localStorage or use default
-    let fontSize = localStorage.getItem("fontSize") || 56;
-    table.style.fontSize = `${fontSize}px`;
+    // // Load font size from localStorage or use default
+    // let fontSize = localStorage.getItem("fontSize") || 40;
+    // table.style.fontSize = `${fontSize}px`;
 
-    increaseButton.addEventListener("click", () => {
-      fontSize = Math.min(fontSize + 5, 150); // Limit max size to 100
-      table.style.fontSize = `${fontSize}px`;
-      localStorage.setItem("fontSize", fontSize);
-    });
+    // increaseButton.addEventListener("click", () => {
+    //   fontSize = Math.min(fontSize + 5, 150); // Limit max size to 100
+    //   table.style.fontSize = `${fontSize}px`;
+    //   localStorage.setItem("fontSize", fontSize);
+    // });
 
-    decreaseButton.addEventListener("click", () => {
-      fontSize = Math.max(fontSize - 5, 40); // Limit min size to 10
-      table.style.fontSize = `${fontSize}px`;
-      localStorage.setItem("fontSize", fontSize);
-    });
+    // decreaseButton.addEventListener("click", () => {
+    //   fontSize = Math.max(fontSize - 5, 40); // Limit min size to 10
+    //   table.style.fontSize = `${fontSize}px`;
+    //   localStorage.setItem("fontSize", fontSize);
+    // });
   </script>
 </body>
