@@ -120,7 +120,11 @@
       const reloadButton = document.getElementById('reloadButton');
 
       reloadButton.addEventListener('click', () => {
-        location.reload(true); // The `true` argument forces a hard reload
+        const timestamp = Date.now();
+        const currentUrl = new URL(window.location.href);
+        currentUrl.searchParams.set('timestamp', timestamp);
+
+        location.replace(currentUrl.toString());
       });
   </script>
 </body>
