@@ -1,10 +1,11 @@
 <body>
-  <!-- <div id="buttons" class="button-container">
-    <button id="decrease" class="button">Mindre text</button>
-    <button id="increase" class="button">Större text</button>
-  </div> -->
-
   <button id="reloadButton">Uppdatera</button>
+
+  <div id="error-container" style="display: none; text-align: center; margin-top: 50px;">
+    <p style="font-size: 50px; color: red; font-weight: bold; margin: 0;">Gick inte att ladda.</p>
+    <p style="font-size: 40px; margin: 10px 0;">Det är inte ditt fel. Ring Jonathan om det inte löst sig inom 2 timmar.</p>
+    <p id="error-details" style="font-size: 20px; color: gray; margin-top: 30px;"></p>
+  </div>
 
   <div id="content">
     <table></table>
@@ -12,8 +13,8 @@
 
   <style>
     #reloadButton {
-      width: 99vw; /* Adjust width as needed */
-      height: 100px; /* Adjust height as needed */
+      width: 99vw;
+      height: 100px;
       font-size: 36px;
       background-color: lightblue;
       cursor: pointer;
@@ -21,31 +22,12 @@
     body {
       font-family: Arial, Helvetica, sans-serif;
     }
-
-    .button-container {
-      display: flex;
-      justify-content: space-evenly;
-      margin: 30px;
-    }
-
-    .button {
-      font-size: 40px;
-      padding: 20px;
-    }
-
     .table-row:nth-child(even) td {
       background-color: #f2f2f2;
     }
-
-    .positive {
-      color: green;
-    }
-    .negative {
-      color: red;
-    }
-    .zero {
-      color: black;
-    }
+    .positive { color: green; }
+    .negative { color: red; }
+    .zero { color: black; }
     table {
       font-size: 40px;
       font-weight: bolder;
@@ -53,8 +35,7 @@
       border-spacing: 0 3rem;
       border-collapse: separate;
     }
-    th,
-    td {
+    th, td {
       border-bottom: 5px solid black;
       padding: 10px;
       text-align: right;
@@ -69,14 +50,26 @@
 
   <script>
     const table = document.querySelector("table");
+    const errorContainer = document.getElementById("error-container");
+    const errorDetails = document.getElementById("error-details");
+    const contentContainer = document.getElementById("content");
 
-    fetch(
-      "https://europe-north1-stable-balancer-421510.cloudfunctions.net/get-data"
-    )
-      .then((response) => response.json())
+    fetch("https://europe-north1-stable-balancer-421510.cloudfunctions.net/get-data")
+      .then(async (response) => {
+        // 1. You MUST check response.ok. If false, extract the error JSON and throw it.
+        if (!response.ok) {
+          const errorData = await response.json().catch(() => ({}));
+          throw new Error(`Status ${response.status}: ${errorData.message || 'Okänt fel'}`);
+        }
+        return response.json();
+      })
       .then((data) => {
-        const headerRow = document.createElement("tr");
+        // 2. Validate that data is actually an array before iterating
+        if (!Array.isArray(data)) {
+          throw new Error("Data från servern är inte en lista.");
+        }
 
+        const headerRow = document.createElement("tr");
         ["Företag", "%", "Kurs"].forEach((text, i) => {
           const th = document.createElement("th");
           th.textContent = text;
@@ -112,18 +105,20 @@
 
           table.appendChild(row);
         });
-
-        document.getElementById("content").appendChild(table);
       })
-      .catch(console.warn);
+      .catch((error) => {
+        // 3. Hide the table container and show the error container
+        contentContainer.style.display = "none";
+        errorContainer.style.display = "block";
+        errorDetails.textContent = `Teknisk info: ${error.message}`;
+        console.error("Fetch failed:", error);
+      });
 
       const reloadButton = document.getElementById('reloadButton');
-
       reloadButton.addEventListener('click', () => {
         const timestamp = Date.now();
         const currentUrl = new URL(window.location.href);
         currentUrl.searchParams.set('timestamp', timestamp);
-
         location.replace(currentUrl.toString());
       });
   </script>
