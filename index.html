@@ -2,7 +2,6 @@
 <html lang="sv">
 <head>
   <meta charset="UTF-8">
-  <!-- These tags request the browser not to cache the HTML, but GitHub Pages HTTP headers will likely override them. -->
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
@@ -11,30 +10,31 @@
     body {
       font-family: Arial, Helvetica, sans-serif;
       margin: 0;
-      padding-top: 50px; /* Space for the fixed reload button */
     }
 
-    /* Loading Indicator Styles */
+    /* Centered, oversized loading banner */
     #loading-container {
       position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      background-color: rgba(255, 255, 255, 0.95);
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 90vw;
+      background-color: rgba(255, 255, 255, 0.98);
       z-index: 1000;
       text-align: center;
-      padding: 20px 0;
-      border-bottom: 2px solid #ccc;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      padding: 80px 20px;
+      border: 5px solid #333;
+      border-radius: 20px;
+      box-shadow: 0 15px 50px rgba(0,0,0,0.5);
     }
     .spinner {
-      border: 8px solid #f3f3f3;
-      border-top: 8px solid #3498db;
+      border: 16px solid #f3f3f3;
+      border-top: 16px solid #3498db;
       border-radius: 50%;
-      width: 50px;
-      height: 50px;
+      width: 150px;
+      height: 150px;
       animation: spin 1s linear infinite;
-      margin: 0 auto 10px auto;
+      margin: 0 auto 40px auto;
     }
     @keyframes spin {
       0% { transform: rotate(0deg); }
@@ -83,7 +83,7 @@
   <!-- Loading Indicator -->
   <div id="loading-container">
     <div class="spinner"></div>
-    <p style="font-size: 30px; font-weight: bold; margin: 0;">Laddar, vänligen vänta</p>
+    <p style="font-size: 60px; font-weight: bold; margin: 0;">Laddar, vänligen vänta</p>
   </div>
 
   <button id="reloadButton">Uppdatera</button>
@@ -105,7 +105,6 @@
     const contentContainer = document.getElementById("content");
     const loadingContainer = document.getElementById("loading-container");
 
-    // Added cache: 'no-store' to guarantee fresh data from the API
     fetch("https://europe-north1-stable-balancer-421510.cloudfunctions.net/get-data", { cache: "no-store" })
       .then(async (response) => {
         if (!response.ok) {
@@ -119,8 +118,7 @@
           throw new Error("Data från servern är inte en lista.");
         }
 
-        const headerRow = document.createElement("tr");
-        ["Företag", "%", "Kurs"].forEach((text, i) => {
+        const headerRow = document.createElement("tr");["Företag", "%", "Kurs"].forEach((text, i) => {
           const th = document.createElement("th");
           th.textContent = text;
           if (i == 0) th.className = "name-cell";
@@ -156,12 +154,10 @@
           table.appendChild(row);
         });
 
-        // Hide loading indicator and show content upon success
         loadingContainer.style.display = "none";
         contentContainer.style.display = "block";
       })
       .catch((error) => {
-        // Hide loading indicator and show error upon failure
         loadingContainer.style.display = "none";
         contentContainer.style.display = "none";
         errorContainer.style.display = "block";
@@ -171,7 +167,6 @@
 
       const reloadButton = document.getElementById('reloadButton');
       reloadButton.addEventListener('click', () => {
-        // This remains an effective way to bust the HTML cache manually on reload
         const timestamp = Date.now();
         const currentUrl = new URL(window.location.href);
         currentUrl.searchParams.set('timestamp', timestamp);
