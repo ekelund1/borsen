@@ -1,33 +1,63 @@
-<body>
-  <button id="reloadButton">Uppdatera</button>
-
-  <div id="error-container" style="display: none; text-align: center; margin-top: 50px;">
-    <p style="font-size: 50px; color: red; font-weight: bold; margin: 0;">Gick inte att ladda.</p>
-    <p style="font-size: 40px; margin: 10px 0;">Det är inte ditt fel. Ring Jonathan om det inte löst sig inom 2 timmar.</p>
-    <p id="error-details" style="font-size: 20px; color: gray; margin-top: 30px;"></p>
-  </div>
-
-  <div id="content">
-    <table></table>
-  </div>
-
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+  <meta charset="UTF-8">
+  <!-- These tags request the browser not to cache the HTML, but GitHub Pages HTTP headers will likely override them. -->
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+  <title>Aktiekurser</title>
   <style>
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      margin: 0;
+      padding-top: 50px; /* Space for the fixed reload button */
+    }
+
+    /* Loading Indicator Styles */
+    #loading-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      background-color: rgba(255, 255, 255, 0.95);
+      z-index: 1000;
+      text-align: center;
+      padding: 20px 0;
+      border-bottom: 2px solid #ccc;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    .spinner {
+      border: 8px solid #f3f3f3;
+      border-top: 8px solid #3498db;
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 10px auto;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
     #reloadButton {
-      width: 99vw;
+      width: 100vw;
       height: 100px;
       font-size: 36px;
       background-color: lightblue;
       cursor: pointer;
+      border: none;
+      display: block;
     }
-    body {
-      font-family: Arial, Helvetica, sans-serif;
-    }
+    
     .table-row:nth-child(even) td {
       background-color: #f2f2f2;
     }
     .positive { color: green; }
     .negative { color: red; }
     .zero { color: black; }
+    
     table {
       font-size: 40px;
       font-weight: bolder;
@@ -47,16 +77,37 @@
       text-align: left;
     }
   </style>
+</head>
+<body>
+
+  <!-- Loading Indicator -->
+  <div id="loading-container">
+    <div class="spinner"></div>
+    <p style="font-size: 30px; font-weight: bold; margin: 0;">Laddar, vänligen vänta</p>
+  </div>
+
+  <button id="reloadButton">Uppdatera</button>
+
+  <div id="error-container" style="display: none; text-align: center; margin-top: 50px;">
+    <p style="font-size: 50px; color: red; font-weight: bold; margin: 0;">Gick inte att ladda.</p>
+    <p style="font-size: 40px; margin: 10px 0;">Det är inte ditt fel. Ring Jonathan om det inte löst sig inom 2 timmar.</p>
+    <p id="error-details" style="font-size: 20px; color: gray; margin-top: 30px;"></p>
+  </div>
+
+  <div id="content" style="display: none;">
+    <table></table>
+  </div>
 
   <script>
     const table = document.querySelector("table");
     const errorContainer = document.getElementById("error-container");
     const errorDetails = document.getElementById("error-details");
     const contentContainer = document.getElementById("content");
+    const loadingContainer = document.getElementById("loading-container");
 
-    fetch("https://europe-north1-stable-balancer-421510.cloudfunctions.net/get-data")
+    // Added cache: 'no-store' to guarantee fresh data from the API
+    fetch("https://europe-north1-stable-balancer-421510.cloudfunctions.net/get-data", { cache: "no-store" })
       .then(async (response) => {
-        // 1. You MUST check response.ok. If false, extract the error JSON and throw it.
         if (!response.ok) {
           const errorData = await response.json().catch(() => ({}));
           throw new Error(`Status ${response.status}: ${errorData.message || 'Okänt fel'}`);
@@ -64,7 +115,6 @@
         return response.json();
       })
       .then((data) => {
-        // 2. Validate that data is actually an array before iterating
         if (!Array.isArray(data)) {
           throw new Error("Data från servern är inte en lista.");
         }
@@ -105,9 +155,14 @@
 
           table.appendChild(row);
         });
+
+        // Hide loading indicator and show content upon success
+        loadingContainer.style.display = "none";
+        contentContainer.style.display = "block";
       })
       .catch((error) => {
-        // 3. Hide the table container and show the error container
+        // Hide loading indicator and show error upon failure
+        loadingContainer.style.display = "none";
         contentContainer.style.display = "none";
         errorContainer.style.display = "block";
         errorDetails.textContent = `Teknisk info: ${error.message}`;
@@ -116,6 +171,7 @@
 
       const reloadButton = document.getElementById('reloadButton');
       reloadButton.addEventListener('click', () => {
+        // This remains an effective way to bust the HTML cache manually on reload
         const timestamp = Date.now();
         const currentUrl = new URL(window.location.href);
         currentUrl.searchParams.set('timestamp', timestamp);
@@ -123,3 +179,4 @@
       });
   </script>
 </body>
+</html>
