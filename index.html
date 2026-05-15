@@ -10,6 +10,9 @@
     body {
       font-family: Arial, Helvetica, sans-serif;
       margin: 0;
+      user-select: none;
+      -webkit-user-select: none;
+      touch-action: manipulation;
     }
 
     /* Centered, oversized loading banner */
@@ -42,13 +45,15 @@
     }
 
     #reloadButton {
-      width: 100vw;
-      height: 100px;
-      font-size: 36px;
+      display: block;
+      margin: 80px auto;
+      padding: 30px 80px;
+      font-size: 48px;
+      font-weight: bold;
       background-color: lightblue;
       cursor: pointer;
       border: none;
-      display: block;
+      border-radius: 12px;
     }
     
     .table-row:nth-child(even) td {
@@ -105,73 +110,103 @@
     const contentContainer = document.getElementById("content");
     const loadingContainer = document.getElementById("loading-container");
 
-    fetch("https://europe-north1-stable-balancer-421510.cloudfunctions.net/get-data", { cache: "no-store" })
-      .then(async (response) => {
-        if (!response.ok) {
-          const errorData = await response.json().catch(() => ({}));
-          throw new Error(`Status ${response.status}: ${errorData.message || 'Okänt fel'}`);
+    const RATES_REFRESH_MS = 5 * 60 * 1000;
+    const HARD_REFRESH_MS = 15 * 60 * 1000;
+    const DATA_URL = "https://europe-north1-stable-balancer-421510.cloudfunctions.net/get-data";
+
+    function renderTable(data) {
+      table.innerHTML = "";
+
+      const headerRow = document.createElement("tr");
+      ["Företag", "%", "Kurs"].forEach((text, i) => {
+        const th = document.createElement("th");
+        th.textContent = text;
+        if (i == 0) th.className = "name-cell";
+        headerRow.appendChild(th);
+      });
+      table.appendChild(headerRow);
+
+      data.forEach((item) => {
+        const row = document.createElement("tr");
+        row.className = "table-row";
+
+        const nameCell = document.createElement("td");
+        nameCell.className = "name-cell";
+        nameCell.textContent = item.name.replaceAll("ser.", "");
+        row.appendChild(nameCell);
+
+        const percentageCell = document.createElement("td");
+        percentageCell.textContent = item.percent;
+        if (item.percent < 0) {
+          percentageCell.className = "negative";
+        } else if (item.percent === 0) {
+          percentageCell.className = "zero";
+        } else {
+          percentageCell.className = "positive";
+          percentageCell.textContent = "+" + item.percent;
         }
-        return response.json();
-      })
-      .then((data) => {
-        if (!Array.isArray(data)) {
-          throw new Error("Data från servern är inte en lista.");
-        }
+        row.appendChild(percentageCell);
 
-        const headerRow = document.createElement("tr");["Företag", "%", "Kurs"].forEach((text, i) => {
-          const th = document.createElement("th");
-          th.textContent = text;
-          if (i == 0) th.className = "name-cell";
-          headerRow.appendChild(th);
-        });
-        table.appendChild(headerRow);
+        const valueCell = document.createElement("td");
+        valueCell.textContent = item.value;
+        row.appendChild(valueCell);
 
-        data.forEach((item) => {
-          const row = document.createElement("tr");
-          row.className = "table-row";
+        table.appendChild(row);
+      });
+    }
 
-          const nameCell = document.createElement("td");
-          nameCell.className = "name-cell";
-          nameCell.textContent = item.name.replaceAll("ser.", "");
-          row.appendChild(nameCell);
-
-          const percentageCell = document.createElement("td");
-          percentageCell.textContent = item.percent;
-          if (item.percent < 0) {
-            percentageCell.className = "negative";
-          } else if (item.percent === 0) {
-            percentageCell.className = "zero";
-          } else {
-            percentageCell.className = "positive";
-            percentageCell.textContent = "+" + item.percent;
+    function fetchRates() {
+      return fetch(DATA_URL, { cache: "no-store" })
+        .then(async (response) => {
+          if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            throw new Error(`Status ${response.status}: ${errorData.message || 'Okänt fel'}`);
           }
-          row.appendChild(percentageCell);
-
-          const valueCell = document.createElement("td");
-          valueCell.textContent = item.value;
-          row.appendChild(valueCell);
-
-          table.appendChild(row);
+          return response.json();
+        })
+        .then((data) => {
+          if (!Array.isArray(data)) {
+            throw new Error("Data från servern är inte en lista.");
+          }
+          renderTable(data);
+          loadingContainer.style.display = "none";
+          contentContainer.style.display = "block";
+        })
+        .catch((error) => {
+          loadingContainer.style.display = "none";
+          contentContainer.style.display = "none";
+          errorContainer.style.display = "block";
+          errorDetails.textContent = `Teknisk info: ${error.message}`;
+          console.error("Fetch failed:", error);
         });
+    }
 
-        loadingContainer.style.display = "none";
-        contentContainer.style.display = "block";
-      })
-      .catch((error) => {
-        loadingContainer.style.display = "none";
-        contentContainer.style.display = "none";
-        errorContainer.style.display = "block";
-        errorDetails.textContent = `Teknisk info: ${error.message}`;
-        console.error("Fetch failed:", error);
-      });
+    // Initial load
+    fetchRates();
 
-      const reloadButton = document.getElementById('reloadButton');
-      reloadButton.addEventListener('click', () => {
-        const timestamp = Date.now();
-        const currentUrl = new URL(window.location.href);
-        currentUrl.searchParams.set('timestamp', timestamp);
-        location.replace(currentUrl.toString());
-      });
+    // Auto-refresh rates every 5 minutes
+    setInterval(fetchRates, RATES_REFRESH_MS);
+
+    // Hard refresh entire page every 15 minutes
+    setInterval(() => {
+      const currentUrl = new URL(window.location.href);
+      currentUrl.searchParams.set('timestamp', Date.now());
+      location.replace(currentUrl.toString());
+    }, HARD_REFRESH_MS);
+
+    // Manual reload button (click + long-press)
+    function hardReload() {
+      const currentUrl = new URL(window.location.href);
+      currentUrl.searchParams.set('timestamp', Date.now());
+      location.replace(currentUrl.toString());
+    }
+
+    const reloadButton = document.getElementById('reloadButton');
+    reloadButton.addEventListener('click', hardReload);
+    reloadButton.addEventListener('touchstart', (e) => {
+      e.preventDefault();
+      hardReload();
+    });
   </script>
 </body>
 </html>
